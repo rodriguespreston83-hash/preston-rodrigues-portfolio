@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preston Rodrigues — Finance & Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --gold: #b8963e;
+    --gold-light: #d4af6a;
+    --rust: #c0442a;
+    --slate: #4a5568;
+    --rule: #c8bfaa;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 4rem;
+    background: rgba(245,240,232,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--slate);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6rem 4rem 6rem 6rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-name em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--slate);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-summary {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--slate);
+    max-width: 480px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+
+  .btn-outline {
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .btn-outline:hover { background: var(--ink); color: var(--paper); transform: translateY(-2px); }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-graphic {
+    position: absolute;
+    inset: 0;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+    z-index: 2;
+    position: relative;
+  }
+
+  .stat-cell {
+    background: var(--cream);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  .hero-corner-text {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--rule);
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+  }
+
+  /* SECTION BASE */
+  section {
+    padding: 6rem 0;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* EXPERIENCE */
+  #experience { background: var(--paper); }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0;
+    width: 1px;
+    background: var(--rule);
+  }
+
+  .job {
+    position: relative;
+    margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .job.visible { opacity: 1; transform: translateY(0); }
+
+  .job::before {
+    content: '';
+    position: absolute;
+    left: -2.35rem;
+    top: 0.5rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+
+  .job-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .job-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .job-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--rule);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .job-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .job-company {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--slate);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .job-achievements {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .job-achievements li {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--slate);
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .job-achievements li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.8rem;
+  }
+
+  .job-achievements li strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--cream); }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .skill-category {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .skill-category.visible { opacity: 1; transform: translateY(0); }
+
+  .skill-cat-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .skill-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--rule);
+    color: var(--slate);
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .skill-tag:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(184,150,62,0.05);
+  }
+
+  /* EDUCATION */
+  #education { background: var(--paper); }
+
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .edu-card {
+    border: 1px solid var(--rule);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .edu-card.visible { opacity: 1; transform: translateY(0); }
+
+  .edu-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+
+  .edu-card:hover::after { transform: scaleX(1); }
+
+  .edu-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .edu-degree {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .edu-institution {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .edu-grade {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 0.8rem;
+    text-transform: uppercase;
+  }
+
+  /* CONTACT */
+  #contact {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  #contact .section-title { color: var(--paper); }
+  #contact .section-num { color: var(--gold); }
+  #contact .section-header { border-bottom-color: rgba(255,255,255,0.1); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .contact-intro {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.8);
+    margin-bottom: 2rem;
+  }
+
+  .contact-items {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .contact-item-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .contact-item-value {
+    font-size: 0.95rem;
+    color: rgba(245,240,232,0.9);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .contact-item-value:hover { color: var(--gold-light); }
+
+  /* FOOTER */
+  footer {
+    background: #080808;
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #444;
+    text-transform: uppercase;
+  }
+
+  .footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--rule); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 2rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 5rem 2rem 3rem; }
+    .hero-right { display: none; }
+    .section-inner { padding: 0 2rem; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1.5rem 2rem; }
+  }
+
+  @media (max-width: 600px) {
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Preston Rodrigues</div>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Finance & Customer Operations · Dublin, Ireland</p>
+    <h1 class="hero-name">Preston<br><em>Rodrigues</em></h1>
+    <p class="hero-title">MBA Finance · 5+ Years Experience</p>
+    <p class="hero-summary">Detail-oriented finance and customer operations professional with expertise across energy, insurance, and customer service. Proven track record of improving financial accuracy, streamlining processes, and delivering data-driven solutions.</p>
+    <div class="hero-ctas">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-graphic">
+      <div class="hero-stats">
+        <div class="stat-cell">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">Years Experience</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-number">95%</span>
+          <span class="stat-label">Collection Rate</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-number">5K+</span>
+          <span class="stat-label">Claims Processed</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-number">35%</span>
+          <span class="stat-label">Lead Time Reduced</span>
+        </div>
+      </div>
+    </div>
+    <p class="hero-corner-text">Dublin · Ireland · 2025</p>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Work Experience</h2>
+    </div>
+    <div class="timeline">
+
+      <div class="job">
+        <div class="job-meta">
+          <span class="job-date">Jun 2025 — Present</span>
+          <span class="job-location">Dublin, Ireland</span>
+        </div>
+        <h3 class="job-title">Customer Experience Advisor</h3>
+        <p class="job-company">Prepay Power</p>
+        <ul class="job-achievements">
+          <li>Handled <strong>50–60 inbound calls daily</strong>, resolving customer account queries with a focus on first contact resolution.</li>
+          <li>Analyzed <strong>kWh and spend data</strong> to identify usage trends and recommend cost-saving tariffs, reducing repeat issues.</li>
+          <li>Consistently met and exceeded <strong>KPIs and SLA targets</strong> in a fast-paced environment.</li>
+          <li>Built strong product knowledge across <strong>electricity, gas, and oil</strong> to support effective issue resolution.</li>
+          <li>Created a <strong>self-built Excel dashboard</strong> to uncover additional consumption trends and improve insight quality during customer calls.</li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job-meta">
+          <span class="job-date">Jul 2021 — Jan 2025</span>
+          <span class="job-location">Mumbai, India</span>
+        </div>
+        <h3 class="job-title">Senior Specialist — Customer Service</h3>
+        <p class="job-company">Marsh McLennan · UK, Europe & Latin America</p>
+        <ul class="job-achievements">
+          <li>Reconciled unmatched cash receipts, <strong>reducing discrepancies by 25% per quarter</strong> and ensuring accurate transfers to underwriters.</li>
+          <li>Achieved a <strong>95% collection rate</strong>, clearing 90% of overdue return premiums within 30 days.</li>
+          <li>Processed <strong>5,000+ claims</strong>, reducing client payout timelines from T+4 to T+1 through process optimisation.</li>
+          <li>Optimised financial workflows, <strong>reducing lead times by 35%</strong> with 90% accuracy on outstanding items.</li>
+          <li>Played a key role in the <strong>JLT-Marsh merger</strong>, overseeing financial data migration and developing an IT-driven workflow tool.</li>
+          <li>Led and mentored a <strong>team of 15 professionals</strong>, providing training on broker support operations.</li>
+          <li>Leveraged advanced Excel (VLOOKUP, pivot tables, data modelling) to produce <strong>revenue reports for senior stakeholders</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="job">
+        <div class="job-meta">
+          <span class="job-date">Aug 2020 — Jun 2021</span>
+          <span class="job-location">Mumbai, India</span>
+        </div>
+        <h3 class="job-title">Customer Service Representative</h3>
+        <p class="job-company">NoBroker Technologies</p>
+        <ul class="job-achievements">
+          <li>Implemented <strong>ERP software</strong> to automate accounting processes for housing societies, improving efficiency and financial accuracy.</li>
+          <li>Delivered <strong>product demonstrations</strong> to clients, improving understanding and adoption of the platform.</li>
+          <li>Provided proactive customer support, strengthening client relationships and <strong>increasing user engagement</strong>.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Skills & Expertise</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-category">
+        <p class="skill-cat-title">Finance & Billing</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Premium Billing</span>
+          <span class="skill-tag">Reconciliations</span>
+          <span class="skill-tag">Collections</span>
+          <span class="skill-tag">Revenue Assurance</span>
+          <span class="skill-tag">Claims Processing</span>
+          <span class="skill-tag">Invoicing</span>
+          <span class="skill-tag">Aged Debtors</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <p class="skill-cat-title">Data & Analysis</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Advanced Excel</span>
+          <span class="skill-tag">VLOOKUP</span>
+          <span class="skill-tag">Pivot Tables</span>
+          <span class="skill-tag">Data Modelling</span>
+          <span class="skill-tag">Dashboard Reporting</span>
+          <span class="skill-tag">KPI Analysis</span>
+          <span class="skill-tag">Usage Analytics</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <p class="skill-cat-title">Operations & CX</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Customer Service</span>
+          <span class="skill-tag">Process Improvement</span>
+          <span class="skill-tag">SLA Management</span>
+          <span class="skill-tag">Team Leadership</span>
+          <span class="skill-tag">Cross-functional</span>
+          <span class="skill-tag">ERP Systems</span>
+          <span class="skill-tag">Utilities</span>
+          <span class="skill-tag">Insurance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Education & Certifications</h2>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <p class="edu-year">Jan 2025 — Jan 2026</p>
+        <h3 class="edu-degree">MBA in Finance</h3>
+        <p class="edu-institution">Dublin Business School</p>
+        <span class="edu-grade">2:1 Second Class Honours · EQF Level 7</span>
+      </div>
+      <div class="edu-card">
+        <p class="edu-year">Certified</p>
+        <h3 class="edu-degree">Certificate in Insurance Product Advice (APA)</h3>
+        <p class="edu-institution">The Insurance Institute of Ireland</p>
+        <span class="edu-grade">CIP 01: 97% · CIP 02: 95%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Get in Touch</h2>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-intro">"Open to new opportunities in finance, operations, and customer experience roles across Ireland and beyond."</p>
+      </div>
+      <div class="contact-items">
+        <div class="contact-item">
+          <span class="contact-item-label">Email</span>
+          <a href="mailto:rodriguespreston83@gmail.com" class="contact-item-value">rodriguespreston83@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Phone</span>
+          <a href="tel:+353899453609" class="contact-item-value">(+353) 899 453 609</a>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">LinkedIn</span>
+          <a href="https://www.linkedin.com/in/preston-rodrigues" target="_blank" class="contact-item-value">linkedin.com/in/preston-rodrigues</a>
+        </div>
+        <div class="contact-item">
+          <span class="contact-item-label">Location</span>
+          <span class="contact-item-value">Dublin, Ireland</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-copy">© 2025 Preston Rodrigues</span>
+  <span class="footer-name">Finance & Operations Professional</span>
+  <span class="footer-copy">Dublin, Ireland</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.dataset.delay || 0);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.job, .skill-category, .edu-card').forEach((el, i) => {
+    el.dataset.delay = (i % 3) * 120;
+    observer.observe(el);
+  });
+
+  // Active nav link
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--gold)' : '';
+    });
+  });
+</script>
+
+</body>
+</html>
